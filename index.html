@@ -65,7 +65,10 @@
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h4 class="m-0">Original CSS</h4>
-            <button id="compress-btn" class="btn btn-primary">Compress CSS</button>
+            <div class="btn-group">
+              <button id="minify-btn" class="btn btn-primary">Minify</button>
+              <button id="beauty-btn" class="btn btn-primary">Beauty</button>
+            </div>
           </div>
           <textarea id="original-css"></textarea>
         </div>
@@ -73,7 +76,7 @@
       <div class="col-md-6">
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="m-0">Compressed CSS</h4>
+            <h4 class="m-0">Processed CSS</h4>
             <button id="copy-btn" class="btn btn-success">Copy to Clipboard</button>
           </div>
           <textarea id="compressed-css"></textarea>
@@ -92,7 +95,8 @@
 
     const originalCssTextarea = document.getElementById('original-css');
     const compressedCssTextarea = document.getElementById('compressed-css');
-    const compressBtn = document.getElementById('compress-btn');
+    const minifyBtn = document.getElementById('minify-btn');
+    const beautyBtn = document.getElementById('beauty-btn');
     const copyBtn = document.getElementById('copy-btn');
 
     const originalEditor = CodeMirror.fromTextArea(originalCssTextarea, {
@@ -110,11 +114,21 @@
       readOnly: true
     });
 
-    compressBtn.addEventListener('click', () => {
+    minifyBtn.addEventListener('click', () => {
       try {
         const originalCss = originalEditor.getValue();
-        const compressedCss = csso.minify(originalCss).css;
-        const beautifiedCss = window.cssbeautify(compressedCss, {
+        const minifiedCss = csso.minify(originalCss).css;
+        compressedEditor.setValue(minifiedCss);
+      } catch (error) {
+        compressedEditor.setValue(`Error: ${error.message}`);
+      }
+    });
+
+    beautyBtn.addEventListener('click', () => {
+      try {
+        const originalCss = originalEditor.getValue();
+        const minifiedCss = csso.minify(originalCss).css;
+        const beautifiedCss = window.cssbeautify(minifiedCss, {
           indent: '  ',
           openbrace: 'end-of-line',
           autosemicolon: true
